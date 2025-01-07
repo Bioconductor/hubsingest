@@ -1,0 +1,30 @@
+name: Delete Hub Ingest Endpoint
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'Username of the endpoint to delete'
+        required: true
+        type: string
+
+jobs:
+  delete-endpoint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: save kubeconfig
+        shell: bash
+        run: mkdir -p ~/.kube && echo "${{ secrets.TEST_KUBECONFIG }}" > ~/.kube/config
+      
+      - name: Install Kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl" && \
+          chmod +x ./kubectl && \
+          sudo mv ./kubectl /usr/local/bin/kubectl && \
+          kubectl version
+      
+      - name: Delete endpoint
+        run: |
+          ./hubsingest delete_endpoint "${{ inputs.username }}"
