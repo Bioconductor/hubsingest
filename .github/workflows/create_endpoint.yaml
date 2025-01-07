@@ -1,0 +1,38 @@
+name: Create Hub Endpoint
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'Username for the endpoint'
+        required: true
+        type: string
+      size:
+        description: 'Storage size (e.g., 50Gi)'
+        required: true
+        type: string
+
+jobs:
+  create-endpoint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: save kubeconfig
+        shell: bash
+        run: mkdir -p ~/.kube && echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+      
+      - name: Install Kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl" && \
+          chmod +x ./kubectl && \
+          sudo mv ./kubectl /usr/local/bin/kubectl && \
+          kubectl version
+      
+      - name: Set up environment
+        run: |
+          echo "SECRET_NAME=S3KEY_${{ inputs.username }}" >> $GITHUB_ENV
+      
+      - name: Create endpoint
+        run: |
+          ./hubsingest create_endpoint "${{ inputs.username }}" "${{ inputs.size }}" "${{ secrets[env.SECRET_NAME] }}"
