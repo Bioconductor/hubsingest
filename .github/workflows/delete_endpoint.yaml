@@ -16,7 +16,7 @@ jobs:
       
       - name: save kubeconfig
         shell: bash
-        run: mkdir -p ~/.kube && echo "${{ secrets.TEST_KUBECONFIG }}" > ~/.kube/config
+        run: mkdir -p ~/.kube && echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
       
       - name: Install Kubectl
         run: |
