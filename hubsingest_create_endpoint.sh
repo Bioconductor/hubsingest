@@ -1,14 +1,15 @@
 #!/bin/bash
 DEFAULTCMD="hubsingest create_endpoint"
 
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $DEFAULTCMD <username> <size>"
-    echo "Example: $DEFAULTCMD testuser 50Gi"
+if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+    echo "Usage: $DEFAULTCMD <username> <size> [password]"
+    echo "Example: $DEFAULTCMD testuser 50Gi mysecretkey"
     exit 1
 fi
 
 PLACEHOLDERUSER="$1"
 PLACEHOLDERSIZE="$2"
+PLACEHOLDERPASS="${3:-$(openssl rand -hex 32)}"
 
 echo "Username: $PLACEHOLDERUSER"
 echo "Size: $PLACEHOLDERSIZE"
@@ -21,7 +22,7 @@ metadata:
 type: Opaque
 stringData:
   access_key: '$PLACEHOLDERUSER'
-  secret_key: '$(openssl rand -hex 32)'
+  secret_key: '$PLACEHOLDERPASS'
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -115,4 +116,3 @@ EOF
 kubectl create ns $PLACEHOLDERUSER-ns
 kubectl apply -f /tmp/hubsingest.yaml -n $PLACEHOLDERUSER-ns
 #rm /tmp/hubsingest.yaml
-
