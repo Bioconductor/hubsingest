@@ -1,0 +1,16 @@
+#!/bin/bash
+
+case "$1" in
+  create_endpoint)
+    shift
+    bash $HUBSINGESTPATH/scripts/hubsingest_create_endpoint.sh "$@"
+    ;;
+  delete_endpoint)
+    shift
+    bash $HUBSINGESTPATH/scripts/hubsingest_delete_endpoint.sh "$@"
+    ;;
+  *)
+    echo "Usage: hubsingest {create_endpoint|delete_endpoint} [options]"
+    exit 1
+    ;;
+esac
