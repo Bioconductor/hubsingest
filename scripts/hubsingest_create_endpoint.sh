@@ -115,4 +115,4 @@ EOF
 
 kubectl create ns $PLACEHOLDERUSER-ns
 kubectl apply -f /tmp/hubsingest.yaml -n $PLACEHOLDERUSER-ns
-#rm /tmp/hubsingest.yaml
+rm /tmp/hubsingest.yaml

@@ -39,5 +39,6 @@ jobs:
       
       - name: Create endpoint
         run: |
-          sudo bash install_hubsingest.sh
+          bash install_hubsingest.sh
+          export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
           hubsingest create_endpoint "${{ inputs.username }}" "${{ inputs.size }}" ${{ secrets[env.SECRET_NAME] }}
