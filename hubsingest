@@ -1,4 +1,5 @@
 #!/bin/bash
+HUBSINGESTPATH=${BIOC_HUBSINGEST_PATH:-/usr/local/bin/hubsingest}
 
 case "$1" in
   create_endpoint)

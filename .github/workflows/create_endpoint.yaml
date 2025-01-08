@@ -12,6 +12,9 @@ on:
         required: true
         type: string
 
+env:
+  BIOC_HUBSINGEST_PATH: "${{ github.workspace }}"
+
 jobs:
   create-endpoint:
     runs-on: ubuntu-latest
@@ -36,4 +39,5 @@ jobs:
       
       - name: Create endpoint
         run: |
-          ./hubsingest create_endpoint "${{ inputs.username }}" "${{ inputs.size }}" ${{ secrets[env.SECRET_NAME] }}
+          sudo bash install_hubsingest.sh
+          hubsingest create_endpoint "${{ inputs.username }}" "${{ inputs.size }}" ${{ secrets[env.SECRET_NAME] }}
