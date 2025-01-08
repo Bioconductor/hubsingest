@@ -1,4 +1,4 @@
-name: Create Hub Endpoint
+name: Create Hub Ingest Endpoint
 
 on:
   workflow_dispatch:
@@ -35,4 +35,4 @@ jobs:
       
       - name: Create endpoint
         run: |
-          ./hubsingest create_endpoint "${{ inputs.username }}" "${{ inputs.size }}" "${{ secrets[env.SECRET_NAME] }}"
+          ./hubsingest create_endpoint "${{ inputs.username }}" "${{ inputs.size }}" ${{ secrets[env.SECRET_NAME] }}
