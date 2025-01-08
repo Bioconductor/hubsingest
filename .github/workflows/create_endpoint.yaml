@@ -31,7 +31,8 @@ jobs:
       
       - name: Set up environment
         run: |
-          echo "SECRET_NAME=S3KEY_${{ inputs.username }}" >> $GITHUB_ENV
+          USERNAME_UPPER=$(echo "${{ inputs.username }}" | tr '[:lower:]' '[:upper:]')
+          echo "SECRET_NAME=S3KEY_${USERNAME_UPPER}" >> $GITHUB_ENV
       
       - name: Create endpoint
         run: |
