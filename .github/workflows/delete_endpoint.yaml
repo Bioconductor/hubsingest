@@ -30,6 +30,7 @@ jobs:
       
       - name: Delete endpoint
         run: |
+          USERNAME_LOWER=$(echo "${{ inputs.username }}" | tr '[:upper:]' '[:lower:]')
           sudo bash install_hubsingest.sh
           export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
-          hubsingest delete_endpoint "${{ inputs.username }}"
+          hubsingest delete_endpoint "${USERNAME_LOWER}"

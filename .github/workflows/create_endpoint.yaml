@@ -34,14 +34,16 @@ jobs:
       
       - name: Set up environment
         run: |
+          USERNAME_LOWER=$(echo "${{ inputs.username }}" | tr '[:upper:]' '[:lower:]')
           USERNAME_UPPER=$(echo "${{ inputs.username }}" | tr '[:lower:]' '[:upper:]')
           echo "SECRET_NAME=S3KEY_${USERNAME_UPPER}" >> $GITHUB_ENV
+          echo "USERNAME=${USERNAME_LOWER}" >> $GITHUB_ENV
       
       - name: Create endpoint then test
         run: |
           bash install_hubsingest.sh
           export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
-          hubsingest create_endpoint "${{ inputs.username }}" "${{ inputs.size }}" ${{ secrets[env.SECRET_NAME] }}
-          kubectl wait -n "${{ inputs.username }}-ns" --for=condition=ready pod -l app=versitygw --timeout=300s
-          kubectl wait -n "${{ inputs.username }}-ns" --for=condition=ready certificate ${{ inputs.username }}-hubsingest-bioconductor-org-key --timeout=600s || bash scripts/reset_endpoint.sh "${{ inputs.username }}" && kubectl wait -n "${{ inputs.username }}-ns" --for=condition=ready certificate ${{ inputs.username }}-hubsingest-bioconductor-org-key --timeout=600s
-          hubsingest test_endpoint "${{ inputs.username }}"
+          hubsingest create_endpoint "${{ env.USERNAME }}" "${{ inputs.size }}" ${{ secrets[env.SECRET_NAME] }}
+          kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready pod -l app=versitygw --timeout=300s
+          kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready certificate ${{ env.USERNAME }}-hubsingest-bioconductor-org-key --timeout=600s || bash scripts/reset_endpoint.sh "${{ env.USERNAME }}" && kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready certificate ${{ env.USERNAME }}-hubsingest-bioconductor-org-key --timeout=600s
+          hubsingest test_endpoint "${{ env.USERNAME }}"

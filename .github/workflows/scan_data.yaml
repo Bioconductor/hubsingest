@@ -30,6 +30,7 @@ jobs:
       
       - name: Run virus scan
         run: |
+          USERNAME_LOWER=$(echo "${{ inputs.username }}" | tr '[:upper:]' '[:lower:]')
           bash install_hubsingest.sh
           export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
-          hubsingest scan_data "${{ inputs.username }}"
+          hubsingest scan_data "${USERNAME_LOWER}"

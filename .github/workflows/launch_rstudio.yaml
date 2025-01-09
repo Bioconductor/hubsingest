@@ -36,16 +36,18 @@ jobs:
       - name: Set up environment
         run: |
           ACTOR_UPPER=$(echo "${{ github.actor }}" | tr '[:lower:]' '[:upper:]')
+          USERNAME_LOWER=$(echo "${{ inputs.username }}" | tr '[:upper:]' '[:lower:]')
           echo "SECRET_NAME=ADMINPASS_${ACTOR_UPPER}" >> $GITHUB_ENV
+          echo "USERNAME=${USERNAME_LOWER}" >> $GITHUB_ENV
       
       - name: Launch RStudio
         run: |
           bash install_hubsingest.sh
           export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
-          hubsingest launch_rstudio "${{ inputs.username }}" "${{ secrets[env.SECRET_NAME] }}" "${{ inputs.bioc_version }}"
+          hubsingest launch_rstudio "${{ env.USERNAME }}" "${{ secrets[env.SECRET_NAME] }}" "${{ inputs.bioc_version }}"
 
       - name: Wait for RStudio and certificate
         run: |
-          kubectl wait -n "${{ inputs.username }}-ns" --for=condition=ready pod -l app=rstudio --timeout=300s
-          kubectl wait -n "${{ inputs.username }}-ns" --for=condition=ready certificate ${{ inputs.username }}-rstudio-tls --timeout=600s
-          echo "RStudio is available at: https://${{ inputs.username }}-rstudio.hubsingest.bioconductor.org"
+          kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready pod -l app=rstudio --timeout=300s
+          kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready certificate ${{ env.USERNAME }}-rstudio-tls --timeout=600s
+          echo "RStudio is available at: https://${{ env.USERNAME }}-rstudio.hubsingest.bioconductor.org"
