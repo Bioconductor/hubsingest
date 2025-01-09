@@ -11,6 +11,8 @@ fi
 USERNAME=$1
 NAMESPACE="${USERNAME}-ns"
 
+kubectl scale deployment -n "$NAMESPACE" versitygw --replicas=0
+
 cat <<EOF | kubectl apply -f -
 apiVersion: batch/v1
 kind: Job
