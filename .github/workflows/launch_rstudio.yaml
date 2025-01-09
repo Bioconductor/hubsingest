@@ -1,0 +1,45 @@
+name: Launch RStudio Instance
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'Username for the RStudio instance'
+        required: true
+        type: string
+
+env:
+  BIOC_HUBSINGEST_PATH: "${{ github.workspace }}"
+
+jobs:
+  launch-rstudio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: save kubeconfig
+        shell: bash
+        run: mkdir -p ~/.kube && echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+      
+      - name: Install Kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl" && \
+          chmod +x ./kubectl && \
+          sudo mv ./kubectl /usr/local/bin/kubectl && \
+          kubectl version
+
+      - name: Set up environment
+        run: |
+          ACTOR_UPPER=$(echo "${{ github.actor }}" | tr '[:lower:]' '[:upper:]')
+          echo "SECRET_NAME=ADMINPASS_${ACTOR_UPPER}" >> $GITHUB_ENV
+      
+      - name: Launch RStudio
+        run: |
+          bash install_hubsingest.sh
+          export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
+          hubsingest launch_rstudio "${{ inputs.username }}" "${{ secrets[env.SECRET_NAME] }}"
+
+      - name: Wait for RStudio and certificate
+        run: |
+          kubectl wait -n "${{ inputs.username }}-ns" --for=condition=ready pod -l app=rstudio --timeout=300s
+          kubectl wait -n "${{ inputs.username }}-ns" --for=condition=ready certificate ${{ inputs.username }}-rstudio-tls --timeout=600s

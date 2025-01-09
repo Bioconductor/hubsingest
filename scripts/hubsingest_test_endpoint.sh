@@ -20,4 +20,4 @@ aws --endpoint-url $ENDPOINTURL s3 cp /tmp/newtestfile s3://testbucket/
 aws --endpoint-url $ENDPOINTURL s3 ls s3://testbucket/ | grep 'newtestfile' && echo 'success' > /tmp/vgwtest || echo 'fail'  > /tmp/vgwtest
 aws --endpoint-url $ENDPOINTURL s3 rb s3://testbucket --force
 grep -q 'success' /tmp/vgwtest && echo "Endpoint test successful" && exit 0
-grep -q 'success' /tmp/vgwtest && echo "Endpoint test failed" && exit 1
+grep -q 'fail' /tmp/vgwtest && echo "Endpoint test failed" && exit 1
