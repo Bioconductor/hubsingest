@@ -56,8 +56,9 @@ echo "Extracting scan report..."
 POD_NAME=$(kubectl get pods -n "$NAMESPACE" -l job-name=virus-scan -o jsonpath='{.items[0].metadata.name}')
 kubectl cp "$NAMESPACE/$POD_NAME:/results/av-scan-report.txt" /tmp/av-scan-report.txt -c holder
 
-echo "Scan Report Contents:"
+echo "==================== VIRUS SCAN REPORT ===================="
 cat /tmp/av-scan-report.txt
+echo "========================================================"
 
 rm /tmp/av-scan-report.txt
 kubectl delete job virus-scan -n "$NAMESPACE"
