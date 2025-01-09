@@ -26,6 +26,8 @@ spec:
   accessModes:
     - ReadWriteMany
   storageClassName: nfs
+  mountOptions:
+    - nfsvers=4.1
   resources:
     requests:
       storage: 50Gi
