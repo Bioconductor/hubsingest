@@ -173,6 +173,23 @@ Example:
 hubsingest delete_endpoint testuser
 ```
 
+#### Virus Scanning
+To scan a contributor's data for viruses:
+```bash
+hubsingest scan_data <username>
+```
+
+#### RStudio Access
+To launch an RStudio instance for examining data:
+```bash
+hubsingest launch_rstudio <username> <password> [bioc_version]
+```
+Example:
+```bash
+hubsingest launch_rstudio dataowner mypassword 3.18
+```
+
+
 ### Testing Your Endpoint
 
 After creating an endpoint, you can test it using the built-in test function or manually using the AWS CLI.
@@ -192,6 +209,9 @@ This will automatically:
 - Verify the file exists
 - Clean up the test bucket
 
+
+### Manual AWS Operations
+
 #### AWS CLI Configuration (Optional)
 For manual testing or data upload, configure an AWS profile:
 ```bash
@@ -200,4 +220,22 @@ aws configure --profile hubsingestusername
 # Enter your secret key (password) when prompted
 # Leave region blank (just press Enter)
 # Leave output format blank (just press Enter)
+```
+
+When using AWS CLI commands manually, you would then have to include the profile and endpoint URL:
+```bash
+aws --profile hubsingestusername --endpoint-url https://<username>.hubsingest.bioconductor.org s3 <command>
+```
+
+Example commands:
+```bash
+# Make bucket and upload a file
+aws --profile hubsingestusername --endpoint-url https://username.hubsingest.bioconductor.org s3 mb s3://mybucket
+aws --profile hubsingestusername --endpoint-url https://username.hubsingest.bioconductor.org s3 cp myfile.txt s3://mybucket/
+
+# List buckets
+aws --profile hubsingestusername --endpoint-url https://username.hubsingest.bioconductor.org s3 ls
+
+# Download a file
+aws --profile hubsingestusername --endpoint-url https://username.hubsingest.bioconductor.org s3 cp s3://mybucket/myfile.txt ./
 ```
