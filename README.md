@@ -175,35 +175,29 @@ hubsingest delete_endpoint testuser
 
 ### Testing Your Endpoint
 
-After creating an endpoint, you can verify it's working properly using the AWS CLI. The generated endpoint URL will be `https://<username>.hubsingest.bioconductor.org`.
+After creating an endpoint, you can test it using the built-in test function or manually using the AWS CLI.
 
-#### Prerequisites for Testing
+#### Prerequisites
 - AWS CLI installed (`aws` command available in your terminal)
 - Your S3 access key (username) and secret key (password)
 
-#### Configure AWS Profile
-You can set up a named profile:
+#### Automatic Testing
+```bash
+hubsingest test_endpoint <username>
+```
+
+This will automatically:
+- Create a test bucket
+- Upload a test file
+- Verify the file exists
+- Clean up the test bucket
+
+#### AWS CLI Configuration (Optional)
+For manual testing or data upload, configure an AWS profile:
 ```bash
 aws configure --profile hubsingestusername
 # Enter your access key (username) when prompted
 # Enter your secret key (password) when prompted
 # Leave region blank (just press Enter)
 # Leave output format blank (just press Enter)
-```
-
-#### Basic Testing Steps
-1. Create a test bucket:
-```bash
-aws --profile hubsingestusername --endpoint-url https://username.hubsingest.bioconductor.org s3 mb s3://testbucket
-```
-
-2. Create and upload a test file:
-```bash
-echo 'test' > /tmp/newtestfile
-aws --profile hubsingestusername --endpoint-url https://username.hubsingest.bioconductor.org s3 cp /tmp/newtestfile s3://testbucket/
-```
-
-3. Verify the file exists:
-```bash
-aws --profile hubsingestusername --endpoint-url https://username.hubsingest.bioconductor.org s3 ls s3://testbucket/
 ```
