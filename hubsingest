@@ -18,8 +18,12 @@ case "$1" in
     shift
     bash $HUBSINGESTPATH/scripts/hubsingest_launch_rstudio.sh "$@"
     ;;
+  scan_data)
+    shift
+    bash $HUBSINGESTPATH/scripts/hubsingest_scan_data.sh "$@"
+    ;;
   *)
-    echo "Usage: hubsingest {create_endpoint|delete_endpoint|test_endpoint|launch_rstudio} [options]"
+    echo "Usage: hubsingest {create_endpoint|delete_endpoint|test_endpoint|launch_rstudio|scan_data} [options]"
     exit 1
     ;;
 esac

@@ -33,16 +33,6 @@ spec:
       labels:
         app: rstudio
     spec:
-      initContainers:
-      - name: clamav-scan
-        image: clamav/clamav:stable
-        command: ["sh", "-c", "clamscan -r /scandir 2>&1 > /results/av-scan-report.txt"]
-        volumeMounts:
-        - name: data-volume
-          mountPath: /scandir
-          readOnly: true
-        - name: scan-results
-          mountPath: /results
       containers:
       - name: rstudio
         image: ghcr.io/bioconductor/bioconductor:$BIOC_VERSION
@@ -54,14 +44,10 @@ spec:
         volumeMounts:
         - name: data-volume
           mountPath: /home/rstudio/shareddata
-        - name: scan-results
-          mountPath: /home/rstudio/av-scan-report
       volumes:
       - name: data-volume
         persistentVolumeClaim:
           claimName: versitygw-data
-      - name: scan-results
-        emptyDir: {}
 EOF
 
 # Create Service

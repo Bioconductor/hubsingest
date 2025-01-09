@@ -1,0 +1,35 @@
+name: Scan Data for Viruses
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'Username of the endpoint to scan'
+        required: true
+        type: string
+
+env:
+  BIOC_HUBSINGEST_PATH: "${{ github.workspace }}"
+
+jobs:
+  scan-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: save kubeconfig
+        shell: bash
+        run: mkdir -p ~/.kube && echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+      
+      - name: Install Kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl" && \
+          chmod +x ./kubectl && \
+          sudo mv ./kubectl /usr/local/bin/kubectl && \
+          kubectl version
+      
+      - name: Run virus scan
+        run: |
+          bash install_hubsingest.sh
+          export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
+          hubsingest scan_data "${{ inputs.username }}"
