@@ -12,28 +12,8 @@ USERNAME=$1
 PASSWORD=$2
 NAMESPACE="${USERNAME}-ns"
 
-# Get size from existing PVC
-STORAGE_SIZE=$(kubectl get pvc -n "$NAMESPACE" versitygw-data -o jsonpath='{.spec.resources.requests.storage}')
-echo "Using storage size from existing PVC: $STORAGE_SIZE"
-
 # Scale down existing deployment
 kubectl scale deployment -n "$NAMESPACE" versitygw --replicas=0
-
-# Create NFS PVC
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: shared-data-pvc
-  namespace: $NAMESPACE
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: nfs
-  resources:
-    requests:
-      storage: $STORAGE_SIZE
-EOF
 
 # Create RStudio deployment
 cat <<EOF | kubectl apply -f -
@@ -52,15 +32,6 @@ spec:
       labels:
         app: rstudio
     spec:
-      initContainers:
-      - name: init-mount
-        image: busybox
-        command: ['sh', '-c', 'cp -r /mnt/data/* /mnt/shareddata/ || true']
-        volumeMounts:
-        - name: versitygw-volume
-          mountPath: /mnt/data
-        - name: shared-data
-          mountPath: /mnt/shareddata
       containers:
       - name: rstudio
         image: ghcr.io/bioconductor/bioconductor:latest
@@ -70,17 +41,12 @@ spec:
         - name: PASSWORD
           value: "$PASSWORD"
         volumeMounts:
-        - name: versitygw-volume
-          mountPath: /home/rstudio/data
-        - name: shared-data
+        - name: data-volume
           mountPath: /home/rstudio/shareddata
       volumes:
-      - name: versitygw-volume
+      - name: data-volume
         persistentVolumeClaim:
           claimName: versitygw-data
-      - name: shared-data
-        persistentVolumeClaim:
-          claimName: shared-data-pvc
 EOF
 
 # Create Service
