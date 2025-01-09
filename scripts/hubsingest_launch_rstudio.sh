@@ -1,9 +1,10 @@
 #!/bin/bash
-
+DEFAULTCMD="hubsingest launch_rstudio"
 set -e
 
 if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <username> <password>"
+    echo "Usage: $DEFAULTCMD <username> <password>"
+    echo "Example: $DEFAULTCMD testuser myrstudiopassword"
     exit 1
 fi
 
