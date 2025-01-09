@@ -48,3 +48,4 @@ jobs:
         run: |
           kubectl wait -n "${{ inputs.username }}-ns" --for=condition=ready pod -l app=rstudio --timeout=300s
           kubectl wait -n "${{ inputs.username }}-ns" --for=condition=ready certificate ${{ inputs.username }}-rstudio-tls --timeout=600s
+          echo "RStudio is available at: https://${USERNAME}-rstudio.hubsingest.bioconductor.org"

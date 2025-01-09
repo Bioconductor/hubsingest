@@ -94,8 +94,3 @@ spec:
             port:
               number: 8787
 EOF
-
-echo "Waiting for RStudio deployment to be ready..."
-kubectl wait -n "$NAMESPACE" --for=condition=ready pod -l app=rstudio --timeout=300s
-
-echo "RStudio is available at: https://${USERNAME}-rstudio.hubsingest.bioconductor.org"
