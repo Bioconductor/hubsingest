@@ -12,6 +12,10 @@ USERNAME=$1
 PASSWORD=$2
 NAMESPACE="${USERNAME}-ns"
 
+# Get size from existing PVC
+STORAGE_SIZE=$(kubectl get pvc -n "$NAMESPACE" versitygw-data -o jsonpath='{.spec.resources.requests.storage}')
+echo "Using storage size from existing PVC: $STORAGE_SIZE"
+
 # Scale down existing deployment
 kubectl scale deployment -n "$NAMESPACE" versitygw --replicas=0
 
@@ -30,7 +34,7 @@ spec:
     - nfsvers=4.1
   resources:
     requests:
-      storage: 50Gi
+      storage: $STORAGE_SIZE
 EOF
 
 # Create RStudio deployment
