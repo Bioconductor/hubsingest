@@ -50,7 +50,7 @@ spec:
 EOF
 
 echo "Waiting for scan init container to complete..."
-kubectl wait -n "$NAMESPACE" --for=condition=initialized pod -l job-name=virus-scan --timeout=600s
+kubectl wait -n "$NAMESPACE" --for=condition=ready pod -l job-name=virus-scan --timeout=600s
 
 echo "Extracting scan report..."
 POD_NAME=$(kubectl get pods -n "$NAMESPACE" -l job-name=virus-scan -o jsonpath='{.items[0].metadata.name}')
