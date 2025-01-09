@@ -2,14 +2,15 @@
 DEFAULTCMD="hubsingest launch_rstudio"
 set -e
 
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $DEFAULTCMD <username> <password>"
-    echo "Example: $DEFAULTCMD testuser myrstudiopassword"
+if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+    echo "Usage: $DEFAULTCMD <username> <password> [bioc_version]"
+    echo "Example: $DEFAULTCMD testuser myrstudiopassword 3.18"
     exit 1
 fi
 
 USERNAME=$1
 PASSWORD=$2
+BIOC_VERSION="${3:-3.20}"
 NAMESPACE="${USERNAME}-ns"
 
 # Scale down existing deployment
@@ -34,7 +35,7 @@ spec:
     spec:
       containers:
       - name: rstudio
-        image: ghcr.io/bioconductor/bioconductor:latest
+        image: ghcr.io/bioconductor/bioconductor:$BIOC_VERSION
         ports:
         - containerPort: 8787
         env:

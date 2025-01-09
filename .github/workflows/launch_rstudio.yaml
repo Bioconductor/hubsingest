@@ -7,6 +7,11 @@ on:
         description: 'Username for the RStudio instance'
         required: true
         type: string
+      bioc_version:
+        description: 'Bioconductor version (e.g., 3.18, 3.19, 3.20)'
+        required: false
+        default: '3.20'
+        type: string
 
 env:
   BIOC_HUBSINGEST_PATH: "${{ github.workspace }}"
@@ -35,7 +40,9 @@ jobs:
       
       - name: Launch RStudio
         run: |
-          bash hubsingest launch_rstudio "${{ inputs.username }}" "${{ secrets[env.SECRET_NAME] }}"
+          bash install_hubsingest.sh
+          export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
+          hubsingest launch_rstudio "${{ inputs.username }}" "${{ secrets[env.SECRET_NAME] }}" "${{ inputs.bioc_version }}"
 
       - name: Wait for RStudio and certificate
         run: |
