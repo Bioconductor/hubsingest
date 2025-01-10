@@ -46,4 +46,5 @@ jobs:
           hubsingest create_endpoint "${{ env.USERNAME }}" "${{ inputs.size }}" ${{ secrets[env.SECRET_NAME] }}
           kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready pod -l app=versitygw --timeout=300s
           kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready certificate ${{ env.USERNAME }}-hubsingest-bioconductor-org-key --timeout=600s || bash scripts/reset_endpoint.sh "${{ env.USERNAME }}" && kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready certificate ${{ env.USERNAME }}-hubsingest-bioconductor-org-key --timeout=600s
+          sleep 30
           hubsingest test_endpoint "${{ env.USERNAME }}"
