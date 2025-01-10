@@ -1,0 +1,37 @@
+name: Build RStudio Image
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight UTC
+  workflow_dispatch: {}   # Keep manual trigger without inputs
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Get latest Bioconductor version
+        id: version
+        run: |
+          LATEST_VERSION=$(curl "https://hub.docker.com/v2/repositories/bioconductor/bioconductor_docker/tags?page_size=100&page=1&ordering=last_updated" | jq '.results[].name' | tr -d '"' | sed 's/RELEASE_//g' | sed 's/_/./g'| grep -v '-' | grep '3.' | sort -Vr | head -1)
+          echo "BIOC_VERSION=$LATEST_VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          build-args: |
+            BIOC_VERSION=${{ steps.version.outputs.BIOC_VERSION }}
+          tags: |
+            ghcr.io/hubsingest/biocrstudio:${{ steps.version.outputs.BIOC_VERSION }}
+            ghcr.io/hubsingest/biocrstudio:latest
