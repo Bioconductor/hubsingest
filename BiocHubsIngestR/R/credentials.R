@@ -12,19 +12,19 @@
 #' BiocHubsIngestR::auth("myusername", "mypassword")
 #' }
 auth <- function(username, password, endpoint = NULL) {
-    if (!is.character(username) || !is.character(password))
-        stop("Username and password must be character strings")
-    
-    if (is.null(endpoint)) {
-        endpoint <- sprintf("https://%s.hubsingest.bioconductor.org", username)
-    }
-    
-    Sys.setenv(
-        AWS_ACCESS_KEY_ID = username,
-        AWS_SECRET_ACCESS_KEY = password,
-        AWS_DEFAULT_REGION = "",
-        AWS_S3_ENDPOINT = endpoint
-    )
-    
-    invisible(NULL)
+  if (!is.character(username) || !is.character(password))
+    stop("Username and password must be character strings")
+
+  if (is.null(endpoint)) {
+    endpoint <- sprintf("https://%s.hubsingest.bioconductor.org", username)
+  }
+
+  Sys.setenv(
+    AWS_ACCESS_KEY_ID = username,
+    AWS_SECRET_ACCESS_KEY = password,
+    AWS_DEFAULT_REGION = "us-east-1",
+    AWS_S3_ENDPOINT = endpoint
+  )
+
+  invisible(NULL)
 }
