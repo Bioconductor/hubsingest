@@ -58,7 +58,7 @@ As an administrator:
 ### Creating an Endpoint
 
 1. Navigate to the "Actions" tab
-2. Select the "Create Hub Endpoint" workflow
+2. Select the "Create Hub Ingest Endpoint" workflow
 3. Click "Run workflow"
 4. Fill in the parameters:
    - Username: Your username (must match the `S3KEY_<USERUSER>` secret)
@@ -89,6 +89,10 @@ Run a virus scan on a contributor's uploaded data:
 4. Click "Run workflow"
 
 The scan results will be displayed directly in the GitHub Actions workflow log, clearly marked between separator lines for easy viewing.
+
+1. Click on the Job
+2. Expand "Run virus scan"
+3. Find and investigate "Virus Scan Report"
 
 #### RStudio Environment
 
