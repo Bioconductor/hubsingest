@@ -33,5 +33,5 @@ jobs:
           build-args: |
             BIOC_VERSION=${{ steps.version.outputs.BIOC_VERSION }}
           tags: |
-            ghcr.io/hubsingest/biocrstudio:${{ steps.version.outputs.BIOC_VERSION }}
-            ghcr.io/hubsingest/biocrstudio:latest
+            ghcr.io/bioconductor/hubsingestbiocrstudio:${{ steps.version.outputs.BIOC_VERSION }}
+            ghcr.io/bioconductor/hubsingestbiocrstudio:latest
