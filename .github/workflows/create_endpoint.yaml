@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Install required packages
         run: |
-          yum update -y && yum install -y curl tar gzip
+          yum update -y && yum install -y curl tar gzip openssl
 
       - name: save kubeconfig
         shell: bash
