@@ -18,9 +18,17 @@ env:
 jobs:
   create-endpoint:
     runs-on: ubuntu-latest
+    container:
+      image: amazon/aws-cli:latest
+      env:
+        BIOC_HUBSINGEST_PATH: "/hubsingest"
     steps:
       - uses: actions/checkout@v4
       
+      - name: Install required packages
+        run: |
+          yum update -y && yum install -y curl tar gzip
+
       - name: save kubeconfig
         shell: bash
         run: mkdir -p ~/.kube && echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
@@ -29,7 +37,7 @@ jobs:
         run: |
           curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.24.4/bin/linux/amd64/kubectl" && \
           chmod +x ./kubectl && \
-          sudo mv ./kubectl /usr/local/bin/kubectl && \
+          mv ./kubectl /usr/local/bin/kubectl && \
           kubectl version
       
       - name: Set up environment
@@ -41,6 +49,9 @@ jobs:
       
       - name: Create endpoint then test
         run: |
+          mkdir -p $BIOC_HUBSINGEST_PATH
+          cp -r . $BIOC_HUBSINGEST_PATH/
+          cd $BIOC_HUBSINGEST_PATH
           bash install_hubsingest.sh
           export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
           hubsingest create_endpoint "${{ env.USERNAME }}" "${{ inputs.size }}" ${{ secrets[env.SECRET_NAME] }}
