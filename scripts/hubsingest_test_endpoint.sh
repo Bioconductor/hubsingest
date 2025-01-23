@@ -15,9 +15,9 @@ export AWS_SECRET_ACCESS_KEY=$(kubectl get secret -n $PLACEHOLDERUSER-ns versity
 export ENDPOINTURL="https://$PLACEHOLDERUSER.hubsingest.bioconductor.org"
 
 aws --endpoint-url $ENDPOINTURL s3 mb s3://testbucket
+echo 'test' > ./newtestfile
 sleep 5
-echo 'test' > /tmp/newtestfile
-aws --endpoint-url $ENDPOINTURL s3 cp /tmp/newtestfile s3://testbucket/
+aws --endpoint-url $ENDPOINTURL s3 cp ./newtestfile s3://testbucket/
 sleep 5
 aws --endpoint-url $ENDPOINTURL s3 ls s3://testbucket/ | grep 'newtestfile' && echo 'success' > /tmp/vgwtest || echo 'fail'  > /tmp/vgwtest
 aws --endpoint-url $ENDPOINTURL s3 rb s3://testbucket --force
