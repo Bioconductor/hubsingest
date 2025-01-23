@@ -23,8 +23,6 @@ jobs:
       env:
         BIOC_HUBSINGEST_PATH: "/hubsingest"
     steps:
-      - uses: actions/checkout@v4
-      
       - name: Install required packages
         run: |
           yum update -y && yum install -y curl tar gzip
@@ -50,8 +48,8 @@ jobs:
       - name: Create endpoint then test
         run: |
           mkdir -p $BIOC_HUBSINGEST_PATH
-          cp -r . $BIOC_HUBSINGEST_PATH/
           cd $BIOC_HUBSINGEST_PATH
+          curl -O https://raw.githubusercontent.com/Bioconductor/hubsingest/devel/install_hubsingest.sh
           bash install_hubsingest.sh
           export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
           hubsingest create_endpoint "${{ env.USERNAME }}" "${{ inputs.size }}" ${{ secrets[env.SECRET_NAME] }}
