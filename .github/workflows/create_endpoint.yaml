@@ -19,7 +19,7 @@ jobs:
   create-endpoint:
     runs-on: ubuntu-latest
     container:
-      image: amazon/aws-cli:2.11.27
+      image: amazon/aws-cli:2.11.25
       env:
         BIOC_HUBSINGEST_PATH: "/hubsingest"
     steps:
