@@ -10,7 +10,7 @@ on:
       bioc_version:
         description: 'Bioconductor version (e.g., 3.18, 3.19, 3.20)'
         required: false
-        default: '3.20'
+        default: '3.21'
         type: string
 
 env:
