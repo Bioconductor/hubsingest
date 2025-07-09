@@ -36,6 +36,7 @@ spec:
       containers:
       - name: rstudio
         image: ghcr.io/bioconductor/hubsingestbiocrstudio:$BIOC_VERSION
+        imagePullPolicy: Always
         ports:
         - containerPort: 8787
         env:
