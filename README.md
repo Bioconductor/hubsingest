@@ -121,8 +121,10 @@ Launch an RStudio instance to examine a contributor's data:
 1. Navigate to the "Actions" tab
 2. Select the "Delete Hub Endpoint" workflow
 3. Click "Run workflow"
-4. Enter your username
+4. Enter your username (or "ALL" to delete all endpoints)
 5. Click "Run workflow"
+
+**Note:** Using "ALL" will delete all endpoints in the cluster (all namespaces ending with "-ns"). This is intended for administrators who need to clean up multiple endpoints at once. Use with caution as this action cannot be undone.
 
 ## Using Local Scripts (Advanced)
 
@@ -176,6 +178,13 @@ Example:
 ```bash
 hubsingest delete_endpoint testuser
 ```
+
+To delete all endpoints at once (for administrators):
+```bash
+hubsingest delete_endpoint ALL
+```
+
+**Warning:** The `ALL` option will delete all namespaces ending with "-ns" in the cluster. This is intended for administrative cleanup and should be used with caution as it cannot be undone.
 
 #### Virus Scanning
 To scan a contributor's data for viruses:
