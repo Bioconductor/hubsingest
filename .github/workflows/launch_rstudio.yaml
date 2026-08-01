@@ -44,6 +44,16 @@ jobs:
           USERNAME_LOWER=$(echo "${{ inputs.username }}" | tr '[:upper:]' '[:lower:]')
           echo "SECRET_NAME=ADMINPASS_${ACTOR_UPPER}" >> $GITHUB_ENV
           echo "USERNAME=${USERNAME_LOWER}" >> $GITHUB_ENV
+
+      # An unset secret expands to an empty string, not an error
+      - name: Check the admin password secret exists
+        env:
+          ADMINPASS: ${{ secrets[env.SECRET_NAME] }}
+        run: |
+          if [ -z "$ADMINPASS" ]; then
+            echo "::error::Repository secret ${SECRET_NAME} is not set. Create it for your GitHub username in uppercase."
+            exit 1
+          fi
       
       - name: Launch RStudio
         run: |
