@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
       - name: versitygw
-        image: ghcr.io/versity/versitygw:v1.0.9
+        image: ghcr.io/versity/versitygw:v1.7.0
         args: ["--debug", "--port", ":10000", "posix", "/mnt/versitydata"]
         ports:
         - containerPort: 10000
