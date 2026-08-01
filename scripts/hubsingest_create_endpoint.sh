@@ -11,6 +11,13 @@ PLACEHOLDERUSER="$1"
 PLACEHOLDERSIZE="$2"
 PLACEHOLDERPASS="${3:-$(openssl rand -hex 32)}"
 
+# Cluster-specific settings; export to override
+HUBSINGEST_VERSITYGW_IMAGE="${HUBSINGEST_VERSITYGW_IMAGE:-ghcr.io/versity/versitygw:v1.7.0}"
+HUBSINGEST_STORAGE_CLASS="${HUBSINGEST_STORAGE_CLASS:-ebs}"
+HUBSINGEST_INGRESS_CLASS="${HUBSINGEST_INGRESS_CLASS:-nginx}"
+HUBSINGEST_CLUSTER_ISSUER="${HUBSINGEST_CLUSTER_ISSUER:-letsencrypt-prod}"
+HUBSINGEST_MAX_BODY_SIZE="${HUBSINGEST_MAX_BODY_SIZE:-10g}"
+
 echo "Username: $PLACEHOLDERUSER"
 echo "Size: $PLACEHOLDERSIZE"
 
@@ -31,7 +38,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ebs
+  storageClassName: $HUBSINGEST_STORAGE_CLASS
   resources:
     requests:
       storage: $PLACEHOLDERSIZE
@@ -52,7 +59,7 @@ spec:
     spec:
       containers:
       - name: versitygw
-        image: ghcr.io/versity/versitygw:v1.7.0
+        image: $HUBSINGEST_VERSITYGW_IMAGE
         args: ["--debug", "--port", ":10000", "posix", "/mnt/versitydata"]
         ports:
         - containerPort: 10000
@@ -90,16 +97,16 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: $HUBSINGEST_CLUSTER_ISSUER
     kubernetes.io/tls-acme: 'true'
-    nginx.ingress.kubernetes.io/proxy-body-size: 10g
+    nginx.ingress.kubernetes.io/proxy-body-size: '$HUBSINGEST_MAX_BODY_SIZE'
   name: versitygw
 spec:
   tls:
     - hosts:
         - $PLACEHOLDERUSER.hubsingest.bioconductor.org
       secretName: $PLACEHOLDERUSER-hubsingest-bioconductor-org-key
-  ingressClassName: nginx
+  ingressClassName: $HUBSINGEST_INGRESS_CLASS
   rules:
   - host: $PLACEHOLDERUSER.hubsingest.bioconductor.org
     http:

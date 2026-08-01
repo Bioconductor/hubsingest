@@ -13,6 +13,10 @@ PASSWORD=$2
 BIOC_VERSION="${3:-3.23}"
 NAMESPACE="${USERNAME}-ns"
 
+# Cluster-specific settings; export to override
+HUBSINGEST_INGRESS_CLASS="${HUBSINGEST_INGRESS_CLASS:-nginx}"
+HUBSINGEST_CLUSTER_ISSUER="${HUBSINGEST_CLUSTER_ISSUER:-letsencrypt-prod}"
+
 # Scale down existing deployment
 kubectl scale deployment -n "$NAMESPACE" versitygw --replicas=0
 
@@ -74,10 +78,10 @@ metadata:
   name: rstudio-ingress
   namespace: $NAMESPACE
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: $HUBSINGEST_CLUSTER_ISSUER
     kubernetes.io/tls-acme: 'true'
 spec:
-  ingressClassName: nginx
+  ingressClassName: $HUBSINGEST_INGRESS_CLASS
   tls:
   - hosts:
     - ${USERNAME}-rstudio.hubsingest.bioconductor.org
