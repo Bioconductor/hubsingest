@@ -76,7 +76,6 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/tls-acme: 'true'
-    nginx.ingress.kubernetes.io/secure-backends: 'true'
     kubernetes.io/ingress.class: nginx
 spec:
   tls:

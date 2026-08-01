@@ -92,8 +92,6 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/tls-acme: 'true'
-    nginx.ingress.kubernetes.io/secure-backends: 'true'
-    nginx.ingress.kubernetes.io/client-max-body-size: 10g
     nginx.ingress.kubernetes.io/proxy-body-size: 10g
   name: versitygw
 spec:
