@@ -32,6 +32,18 @@ jobs:
           sudo mv ./kubectl /usr/local/bin/kubectl && \
           kubectl version
       
+      - name: Show what will be deleted
+        env:
+          USERNAME_INPUT: ${{ inputs.username }}
+        run: |
+          if [ "$USERNAME_INPUT" = "ALL" ]; then
+            echo "Namespaces ending in '-ns':"
+            kubectl get ns -o name | grep -- '-ns$' || echo "  (none)"
+          else
+            USERNAME_LOWER=$(echo "$USERNAME_INPUT" | tr '[:upper:]' '[:lower:]')
+            kubectl get ns "${USERNAME_LOWER}-ns" || true
+          fi
+
       - name: Delete endpoint
         run: |
           sudo bash install_hubsingest.sh
