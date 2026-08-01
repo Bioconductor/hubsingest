@@ -52,6 +52,7 @@ jobs:
       
       - name: Create endpoint then test
         run: |
+          set -eo pipefail
           mkdir -p $BIOC_HUBSINGEST_PATH
           cd $BIOC_HUBSINGEST_PATH
           curl -O https://raw.githubusercontent.com/Bioconductor/hubsingest/devel/install_hubsingest.sh
@@ -59,6 +60,12 @@ jobs:
           export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
           hubsingest create_endpoint "${{ env.USERNAME }}" "${{ inputs.size }}" ${{ secrets[env.SECRET_NAME] }}
           kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready pod -l app=versitygw --timeout=300s
-          kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready certificate ${{ env.USERNAME }}-hubsingest-bioconductor-org-key --timeout=600s || bash scripts/reset_endpoint_ssl.sh "${{ env.USERNAME }}" && kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready certificate ${{ env.USERNAME }}-hubsingest-bioconductor-org-key --timeout=600s
+          CERT="$USERNAME-hubsingest-bioconductor-org-key"
+          # Reset a stuck ACME order once, then wait again
+          if ! kubectl wait -n "$USERNAME-ns" --for=condition=ready certificate "$CERT" --timeout=600s; then
+            echo "Certificate not ready; resetting the ACME order."
+            bash scripts/reset_endpoint_ssl.sh "$USERNAME"
+            kubectl wait -n "$USERNAME-ns" --for=condition=ready certificate "$CERT" --timeout=600s
+          fi
           sleep 30
           hubsingest test_endpoint "${{ env.USERNAME }}"
