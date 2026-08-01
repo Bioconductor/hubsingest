@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       username:
-        description: 'Username for the RStudio instance'
+        description: "Contributor's username (whose data to examine)"
         required: true
         type: string
       bioc_version:
@@ -66,3 +66,6 @@ jobs:
           kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready pod -l app=rstudio --timeout=7200s
           kubectl wait -n "${{ env.USERNAME }}-ns" --for=condition=ready certificate ${{ env.USERNAME }}-rstudio-tls --timeout=3600s
           echo "RStudio is available at: https://${{ env.USERNAME }}-rstudio.hubsingest.bioconductor.org"
+          echo "Log in as 'rstudio' with your ADMINPASS_<GITHUB-USERNAME> value."
+          echo "The contributor's S3 endpoint stays offline until versitygw is scaled back up."
+          echo "Delete the endpoint when the review is finished."
