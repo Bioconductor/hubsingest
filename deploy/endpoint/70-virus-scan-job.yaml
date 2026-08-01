@@ -1,0 +1,43 @@
+---
+# Scale versitygw to zero first: the data volume is ReadWriteOnce.
+# The scan runs in an init container, records clamscan's exit code in the
+# report and exits 0; the holder container keeps the report readable for
+# kubectl cp.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: virus-scan
+spec:
+  template:
+    spec:
+      initContainers:
+      - name: clamav-scan
+        image: clamav/clamav:stable
+        command:
+          - sh
+          - -c
+          - |
+            clamscan -r /scandir > /results/av-scan-report.txt 2>&1
+            echo "CLAMSCAN_EXIT_CODE=$?" >> /results/av-scan-report.txt
+            exit 0
+        volumeMounts:
+        - name: data-volume
+          mountPath: /scandir
+          readOnly: true
+        - name: results
+          mountPath: /results
+      containers:
+      - name: holder
+        image: busybox
+        command: ['sh', '-c', 'sleep infinity']
+        volumeMounts:
+        - name: results
+          mountPath: /results
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: versitygw-data
+      - name: results
+        emptyDir: {}
+      restartPolicy: Never
+  backoffLimit: 1

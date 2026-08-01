@@ -1,0 +1,9 @@
+---
+# One namespace per contributor. HUBSINGEST_USER must be a lowercase DNS label.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${HUBSINGEST_USER}-ns
+  labels:
+    app.kubernetes.io/part-of: hubsingest
+    hubsingest.bioconductor.org/contributor: ${HUBSINGEST_USER}

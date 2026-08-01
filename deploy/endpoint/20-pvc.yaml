@@ -1,0 +1,14 @@
+---
+# ReadWriteOnce: scale versitygw to zero before 60-rstudio.yaml or
+# 70-virus-scan-job.yaml mounts this volume.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: versitygw-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ${HUBSINGEST_STORAGE_CLASS}
+  resources:
+    requests:
+      storage: ${HUBSINGEST_SIZE}

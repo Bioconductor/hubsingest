@@ -1,0 +1,40 @@
+---
+# Versity S3 Gateway, POSIX backend. Global options must precede the backend name.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: versitygw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: versitygw
+  template:
+    metadata:
+      labels:
+        app: versitygw
+    spec:
+      containers:
+      - name: versitygw
+        image: ${HUBSINGEST_VERSITYGW_IMAGE}
+        args: ["--debug", "--port", ":10000", "posix", "/mnt/versitydata"]
+        ports:
+        - containerPort: 10000
+        env:
+        - name: ROOT_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: versitygw-credentials
+              key: access_key
+        - name: ROOT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: versitygw-credentials
+              key: secret_key
+        volumeMounts:
+        - name: data
+          mountPath: /mnt/versitydata
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: versitygw-data
