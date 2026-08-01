@@ -121,5 +121,8 @@ spec:
 EOF
 
 kubectl create ns $PLACEHOLDERUSER-ns
+kubectl label ns $PLACEHOLDERUSER-ns --overwrite \
+  app.kubernetes.io/part-of=hubsingest \
+  hubsingest.bioconductor.org/contributor=$PLACEHOLDERUSER
 kubectl apply -f /tmp/hubsingest.yaml -n $PLACEHOLDERUSER-ns
 rm /tmp/hubsingest.yaml
