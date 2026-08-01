@@ -4,13 +4,13 @@ set -e
 
 if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
     echo "Usage: $DEFAULTCMD <username> <password> [bioc_version]"
-    echo "Example: $DEFAULTCMD testuser myrstudiopassword 3.18"
+    echo "Example: $DEFAULTCMD testuser myrstudiopassword 3.23"
     exit 1
 fi
 
 USERNAME=$1
 PASSWORD=$2
-BIOC_VERSION="${3:-3.20}"
+BIOC_VERSION="${3:-3.23}"
 NAMESPACE="${USERNAME}-ns"
 
 # Scale down existing deployment

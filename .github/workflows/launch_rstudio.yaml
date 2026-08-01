@@ -8,9 +8,10 @@ on:
         required: true
         type: string
       bioc_version:
-        description: 'Bioconductor version (e.g., 3.18, 3.19, 3.20)'
+        description: 'Bioconductor version (e.g., 3.22, 3.23)'
         required: false
-        default: '3.22'
+        # Update at each Bioconductor release; input defaults cannot be expressions
+        default: '3.23'
         type: string
 
 env:

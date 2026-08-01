@@ -199,7 +199,7 @@ hubsingest launch_rstudio <username> <password> [bioc_version]
 ```
 Example:
 ```bash
-hubsingest launch_rstudio dataowner mypassword 3.18
+hubsingest launch_rstudio dataowner mypassword 3.23
 ```
 
 
