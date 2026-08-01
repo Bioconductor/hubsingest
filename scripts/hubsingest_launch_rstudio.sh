@@ -76,8 +76,8 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/tls-acme: 'true'
-    kubernetes.io/ingress.class: nginx
 spec:
+  ingressClassName: nginx
   tls:
   - hosts:
     - ${USERNAME}-rstudio.hubsingest.bioconductor.org
