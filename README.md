@@ -1,6 +1,6 @@
 # Bioconductor Hubs Ingest Tools
 
-This repository contains automation tools to simplify the use of the new experimental Bioconductor Hubs Ingest stack. These tools streamline the process of creating and managing temporary endpoints for ingesting data for the Bioconductor Hubs.
+Tools for creating and managing the temporary endpoints that take data contributions for the Bioconductor Hubs.
 
 Each contribution gets its own short-lived, S3-compatible endpoint on Kubernetes.
 The contributor uploads to it; an admin scans and reviews the data, copies it
@@ -24,7 +24,7 @@ This page covers using the service. Maintainer documentation is in
 
 ## Using GitHub Actions Workflows (Recommended)
 
-The easiest way to manage endpoints is through our provided GitHub Actions workflows.
+Manage endpoints with the GitHub Actions workflows.
 
 ### Prerequisites
 - The following repository secrets must be configured by an administrator:
@@ -104,7 +104,7 @@ Run a virus scan on a contributor's uploaded data:
 3. Enter the contributor's username
 4. Click "Run workflow"
 
-The scan results will be displayed directly in the GitHub Actions workflow log, clearly marked between separator lines for easy viewing.
+The scan results are shown in the workflow log, between separator lines:
 
 1. Click on the Job
 2. Expand "Run virus scan"
@@ -267,11 +267,11 @@ For manual testing or data upload, configure an AWS profile:
 aws configure --profile hubsingestusername
 # Enter your access key (username) when prompted
 # Enter your secret key (password) when prompted
-# Leave region blank (just press Enter)
-# Leave output format blank (just press Enter)
+# Leave region blank (press Enter)
+# Leave output format blank (press Enter)
 ```
 
-When using AWS CLI commands manually, you would then have to include the profile and endpoint URL:
+Include the profile and endpoint URL in each AWS CLI command:
 ```bash
 aws --profile hubsingestusername --endpoint-url https://<username>.hubsingest.bioconductor.org s3 <command>
 ```
