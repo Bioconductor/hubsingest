@@ -10,7 +10,8 @@ scripts do not create them.
 | StorageClass `ebs` with ReadWriteOnce volumes | The contribution volume | The cluster's block-storage CSI driver |
 | DNS record `*.hubsingest.bioconductor.org` | Every endpoint hostname | A record to the ingress controller |
 
-The ingress controller and cert-manager are installed from their Helm charts.
+The ingress controller and cert-manager are installed from their Helm charts;
+see [`../../docs/deployment.md`](../../docs/deployment.md).
 
 | File | Contents |
 |---|---|
