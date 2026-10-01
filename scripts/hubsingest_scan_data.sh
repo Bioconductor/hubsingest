@@ -25,6 +25,8 @@ spec:
       initContainers:
       - name: clamav-scan
         image: clamav/clamav:stable
+        # Signatures are part of the image; pull it for every scan
+        imagePullPolicy: Always
         # Exit 0 so the pod reaches Ready; the exit code is read from the report
         command:
           - sh

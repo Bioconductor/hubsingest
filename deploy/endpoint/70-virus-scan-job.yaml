@@ -13,6 +13,8 @@ spec:
       initContainers:
       - name: clamav-scan
         image: clamav/clamav:stable
+        # Signatures are part of the image; pull it for every scan
+        imagePullPolicy: Always
         command:
           - sh
           - -c
