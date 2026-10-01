@@ -33,43 +33,35 @@ The easiest way to manage endpoints is through our provided GitHub Actions workf
 ### Managing Secrets
 
 Two distinct types of secrets are used in this system:
-1. **User S3 Keys** (`S3KEY_<USERUSER>`): 
+1. **User S3 Keys** (`S3KEY_<USERNAME>`): 
    - One unique key per data submitter
    - Used only for their specific endpoint
    - Should be randomly generated for security
    
-2. **Admin Access Password** (`ADMINPASS_<ADMINUSER>`):
+2. **Admin Access Password** (`ADMINPASS_<GITHUB-USERNAME>`):
    - One password per administrator
    - Used for ALL RStudio instances launched by that admin
    - Should be a secure, memorable password you'll reuse
    - Same password works on any endpoint you examine
 
 #### Setting Up User S3 Keys
-Generate a random key for each data submitter using one of these methods:
+Generate a random key for each data submitter:
 
-1. Using OpenSSL (recommended):
-   ```bash
-   openssl rand -hex 32
-   ```
-
-2. Using /dev/urandom:
-   ```bash
-   cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
-   ```
-
-3. Manual method: Randomly type at least 32 letters and numbers on your keyboard
+```bash
+openssl rand -hex 32
+```
 
 Add the generated key as a GitHub secret:
-- Name it `S3KEY_<USERUSER>` (e.g., `S3KEY_DATAOWNER`)
+- Name it `S3KEY_<USERNAME>` (e.g., `S3KEY_DATAOWNER`)
 - Share this random key securely with the data submitter
 - They'll need it for S3 endpoint access
 
 #### Setting Up Your Admin Password
 As an administrator:
 1. Choose a secure password you want to reuse
-2. Create a secret named `ADMINPASS_<ADMINUSER>`
-   - Where ADMINUSER is YOUR GitHub username in uppercase
-   - Example: GitHub user 'almahmoud' creates `ADMINPASS_ALMAHMOUD`
+2. Create a secret named `ADMINPASS_<GITHUB-USERNAME>`
+   - Where GITHUB-USERNAME is YOUR GitHub username in uppercase
+   - Example: GitHub user 'octocat' creates `ADMINPASS_OCTOCAT`
 3. This will be your password for ALL RStudio instances you launch
    - Username will always be `rstudio`
    - Password will always be your ADMINPASS value
@@ -81,7 +73,7 @@ As an administrator:
 2. Select the "Create Hub Ingest Endpoint" workflow
 3. Click "Run workflow"
 4. Fill in the parameters:
-   - Username: Your username (must match the `S3KEY_<USERUSER>` secret)
+   - Username: The contributor's username (must match the `S3KEY_<USERNAME>` secret)
    - Size: Storage size (e.g., "50Gi")
 5. Click "Run workflow"
 
@@ -127,29 +119,30 @@ See [docs/troubleshooting.md](docs/troubleshooting.md#the-scan-workflow-fails-af
 Launch an RStudio instance to examine a contributor's data:
 
 1. First, ensure you have set up your admin password:
-   - Secret name: `ADMINPASS_<ADMINUSER>` where ADMINUSER is YOUR GitHub username in uppercase
-   - Example: GitHub user 'almahmoud' needs secret `ADMINPASS_ALMAHMOUD`
+   - Secret name: `ADMINPASS_<GITHUB-USERNAME>` where GITHUB-USERNAME is YOUR GitHub username in uppercase
+   - Example: GitHub user 'octocat' needs secret `ADMINPASS_OCTOCAT`
 
 2. Launch RStudio:
-   - Enter the CONTRIBUTOR'S username
+   - Navigate to the "Actions" tab, select the "Launch RStudio Instance" workflow and click "Run workflow"
+   - Enter the CONTRIBUTOR'S username, and optionally the Bioconductor version of the image (`bioc_version`), then click "Run workflow"
    - The workflow will use YOUR admin password for RStudio access
-   - Example: Admin 'almahmoud' examining contributor 'dataowner's data:
+   - Example: Admin 'octocat' examining contributor 'dataowner's data:
      - Username parameter: dataowner
-     - RStudio password: Value from `ADMINPASS_ALMAHMOUD`
+     - RStudio password: Value from `ADMINPASS_OCTOCAT`
 
 3. Access RStudio:
    - URL: `https://<contributor>-rstudio.hubsingest.bioconductor.org`
       - Example: `https://dataowner-rstudio.hubsingest.bioconductor.org`
    - Login with:
      - Username: Always `rstudio`
-     - Password: Your `ADMINPASS_<ADMINUSER>` value
+     - Password: Your `ADMINPASS_<GITHUB-USERNAME>` value
 
 ### Deleting an Endpoint
 
 1. Navigate to the "Actions" tab
-2. Select the "Delete Hub Endpoint" workflow
+2. Select the "Delete Hub Ingest Endpoint" workflow
 3. Click "Run workflow"
-4. Enter your username (or "ALL" to delete all endpoints)
+4. Enter the contributor's username (or "ALL" to delete all endpoints)
 5. Click "Run workflow"
 
 **Note:** Using "ALL" will delete all endpoints in the cluster (all namespaces ending with "-ns"). This is intended for administrators who need to clean up multiple endpoints at once. Use with caution as this action cannot be undone.
@@ -165,7 +158,12 @@ Launch an RStudio instance to examine a contributor's data:
 
 ### Installation
 
-**Note:** You can customize the installation path by exporting the `BIOC_HUBSINGEST_PATH` environment variable before running the installation command. If not specified, the tools will be installed in the default directory (/usr/local/bin/hubsingest).
+**Note:** The tools are installed in `/usr/local/bin/hubsingest` by default.
+For another directory, pass `BIOC_HUBSINGEST_PATH` through `sudo`, which does
+not keep exported variables: `curl ... | sudo env BIOC_HUBSINGEST_PATH=<dir> bash`.
+For a directory you can write to, export the variable and run `bash` without
+`sudo`. `hubsingest` reads the same variable to find its scripts, so keep it
+exported whenever you run `hubsingest`.
 
 ```bash
 curl https://raw.githubusercontent.com/Bioconductor/hubsingest/refs/heads/devel/install_hubsingest.sh | sudo bash
@@ -194,6 +192,11 @@ hubsingest create_endpoint testuser 50Gi
 
 # With specific password
 hubsingest create_endpoint testuser 50Gi myspecificpassword
+```
+
+An auto-generated key is not printed. Read it from the endpoint's Secret:
+```bash
+kubectl get secret -n <username>-ns versitygw-credentials -o jsonpath='{.data.secret_key}' | base64 -d
 ```
 
 #### Deleting an Endpoint
@@ -241,7 +244,8 @@ After creating an endpoint, you can test it using the built-in test function or 
 
 #### Prerequisites
 - AWS CLI installed (`aws` command available in your terminal)
-- Your S3 access key (username) and secret key (password)
+- Automatic testing: `kubectl` access to the cluster; the test reads the secret key from the endpoint
+- Manual commands: the S3 access key (username) and secret key (password)
 
 #### Automatic Testing
 ```bash
