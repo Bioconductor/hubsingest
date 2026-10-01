@@ -66,7 +66,16 @@ POD_NAME=$(kubectl get pods -n "$NAMESPACE" -l job-name=virus-scan -o jsonpath='
 kubectl cp "$NAMESPACE/$POD_NAME:/results/av-scan-report.txt" /tmp/av-scan-report.txt -c holder
 
 echo "==================== VIRUS SCAN REPORT ===================="
+# File names in the report come from the contributor; keep GitHub Actions from
+# reading them as workflow commands
+if [ "${GITHUB_ACTIONS:-}" = true ]; then
+    STOP_TOKEN=$(openssl rand -hex 16)
+    echo "::stop-commands::$STOP_TOKEN"
+fi
 cat /tmp/av-scan-report.txt
+if [ "${GITHUB_ACTIONS:-}" = true ]; then
+    echo "::$STOP_TOKEN::"
+fi
 echo "========================================================"
 
 SCAN_EXIT=$(grep '^CLAMSCAN_EXIT_CODE=' /tmp/av-scan-report.txt | tail -n1 | cut -d= -f2)
