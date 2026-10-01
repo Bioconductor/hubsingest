@@ -19,6 +19,9 @@ env:
   # Keep within one minor version of the cluster's Kubernetes version
   KUBECTL_VERSION: "v1.24.17"
 
+permissions:
+  contents: read
+
 jobs:
   launch-rstudio:
     runs-on: ubuntu-latest

@@ -5,6 +5,10 @@ on:
     - cron: '0 0 * * *'  # Run daily at midnight UTC
   workflow_dispatch: {}   # Keep manual trigger without inputs
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
