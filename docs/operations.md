@@ -175,6 +175,8 @@ kubectl delete deployment rstudio -n <username>-ns
 | Before the `KUBECONFIG` token expires | Rotate it |
 | Yearly | Review who has write access to the repository, which is access to the cluster; delete `ADMINPASS_*` secrets of former admins |
 
+Updates and their cadence are in [updating.md](updating.md).
+
 ## Known limitations
 
 - **The endpoint is offline during admin operations.** The volume is

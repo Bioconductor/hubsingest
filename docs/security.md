@@ -139,7 +139,7 @@ Rancher (`rancher.cloudman.hubsingest.bioconductor.org`) and CloudMan
 (`cloudman.hubsingest.bioconductor.org`) are served by the same ingress
 controller as the endpoints, and both manage the cluster. Restrict them to
 known addresses or put them behind a VPN, and keep Rancher on a release line
-that receives security fixes.
+that receives security fixes; see [updating.md](updating.md#rancher).
 
 ### Contributor data in R
 
