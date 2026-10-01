@@ -2,6 +2,26 @@
 
 This repository contains automation tools to simplify the use of the new experimental Bioconductor Hubs Ingest stack. These tools streamline the process of creating and managing temporary endpoints for ingesting data for the Bioconductor Hubs.
 
+Each contribution gets its own short-lived, S3-compatible endpoint on Kubernetes.
+The contributor uploads to it; an admin scans and reviews the data, copies it
+to the Hubs' storage, and deletes the endpoint.
+
+## Documentation
+
+This page covers using the service. Maintainer documentation is in
+[docs/](docs/README.md):
+
+| Page | Contents |
+|---|---|
+| [Architecture](docs/architecture.md) | Components, workflows, state |
+| [Deployment](docs/deployment.md) | Setting up a cluster and the repository |
+| [Operations](docs/operations.md) | Contribution lifecycle, health checks, credential rotation |
+| [Updating](docs/updating.md) | Update procedures and cadence |
+| [Troubleshooting](docs/troubleshooting.md) | Symptom, cause and fix |
+| [Security](docs/security.md) | Credentials, exposed services, reporting a vulnerability |
+| [Examples](docs/examples/README.md) | Example values and a worked contribution |
+| [deploy/](deploy/README.md) | Kubernetes templates |
+
 ## Using GitHub Actions Workflows (Recommended)
 
 The easiest way to manage endpoints is through our provided GitHub Actions workflows.
