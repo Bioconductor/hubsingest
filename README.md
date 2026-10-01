@@ -97,7 +97,11 @@ The workflow will:
 
 These tools are for administrators to examine data that contributors have uploaded to their endpoints:
 
-**Note:** This will stop the contributor's ingestion endpoint. Only run these steps after confirming they have completed their data uploads.
+**Note:** The storage volume attaches to one node at a time, so the scan and
+RStudio stop the contributor's S3 gateway first, and an upload in progress at
+that moment fails. Run them only after the contributor has finished uploading.
+To bring the endpoint back, see
+[docs/operations.md](docs/operations.md#restoring-an-endpoint-after-a-scan-or-review).
 
 #### Virus Scanning
 
@@ -113,6 +117,10 @@ The scan results will be displayed directly in the GitHub Actions workflow log, 
 1. Click on the Job
 2. Expand "Run virus scan"
 3. Find and investigate "Virus Scan Report"
+
+The workflow fails when ClamAV finds infected files or reports scan errors.
+In both cases the data is not cleared: do not open it in RStudio or promote it.
+See [docs/troubleshooting.md](docs/troubleshooting.md#the-scan-workflow-fails-after-printing-the-report).
 
 #### RStudio Environment
 
@@ -222,6 +230,10 @@ Example:
 hubsingest launch_rstudio dataowner mypassword 3.23
 ```
 
+The contribution is mounted at `/home/rstudio/shareddata`, and
+[rclone](https://rclone.org) is installed for copying the reviewed data to the
+Hubs' storage. RStudio stays reachable from the internet until the endpoint is
+deleted; delete it when the review is finished.
 
 ### Testing Your Endpoint
 
