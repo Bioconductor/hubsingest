@@ -56,10 +56,13 @@ jobs:
           fi
       
       - name: Launch RStudio
+        env:
+          ADMINPASS: ${{ secrets[env.SECRET_NAME] }}
+          BIOC_VERSION_INPUT: ${{ inputs.bioc_version }}
         run: |
           bash install_hubsingest.sh
           export PATH="$PATH:$BIOC_HUBSINGEST_PATH"
-          hubsingest launch_rstudio "${{ env.USERNAME }}" "${{ secrets[env.SECRET_NAME] }}" "${{ inputs.bioc_version }}"
+          hubsingest launch_rstudio "$USERNAME" "$ADMINPASS" "$BIOC_VERSION_INPUT"
 
       - name: Wait for RStudio and certificate
         run: |

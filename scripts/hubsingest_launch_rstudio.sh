@@ -17,6 +17,10 @@ NAMESPACE="${USERNAME}-ns"
 HUBSINGEST_INGRESS_CLASS="${HUBSINGEST_INGRESS_CLASS:-nginx}"
 HUBSINGEST_CLUSTER_ISSUER="${HUBSINGEST_CLUSTER_ISSUER:-letsencrypt-prod}"
 
+# Escape for the YAML double-quoted scalar in the Deployment
+PASSWORD_YAML=${PASSWORD//\\/\\\\}
+PASSWORD_YAML=${PASSWORD_YAML//\"/\\\"}
+
 # Scale down existing deployment
 kubectl scale deployment -n "$NAMESPACE" versitygw --replicas=0
 
@@ -45,7 +49,7 @@ spec:
         - containerPort: 8787
         env:
         - name: PASSWORD
-          value: "$PASSWORD"
+          value: "$PASSWORD_YAML"
         volumeMounts:
         - name: data-volume
           mountPath: /home/rstudio/shareddata
